@@ -358,6 +358,7 @@ def encrypt(block, key):
 
     key = _byte_array_to_bit_list(key)
     message = _byte_array_to_bit_list(block)
+
     message = _perm(message, __ip)
 
     key_n = _KS(key)
@@ -365,9 +366,9 @@ def encrypt(block, key):
         message = _round(key, message)
 
     L, R = np.split(message, 2)
-    m = np.concatenate((R, L))
-    message = _perm(m, __ip_inv)
-    out = _bit_list_to_byte_array(message)
+    swapped = np.concatenate((R, L))
+
+    out = _bit_list_to_byte_array(_perm(swapped, __ip_inv))
     return out
 
 
