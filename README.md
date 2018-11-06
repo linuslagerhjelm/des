@@ -9,5 +9,7 @@ is planned for the future.
 *Example usage:*
 
 ```python
-des.encrypt(b'abcdefgh', b'descrypt')  # b'\x03<\xb4\xd8E\xd98\xa7'
+import des
+cipher_text = des.encrypt(b'abcdefgh', b'descrypt')
+print(cipher_text)  # b'\x03<\xb4\xd8E\xd98\xa7'
 ```
