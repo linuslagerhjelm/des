@@ -184,8 +184,3 @@ class TestEncrypt(TestCase):
         expected = [1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0]
 
         self.assertEquals(expected, des._f(R, K).tolist())
-
-    @unittest.SkipTest
-    def test_perf(self):
-        for _ in range(1000):
-            des.encrypt(STR, KEY)
