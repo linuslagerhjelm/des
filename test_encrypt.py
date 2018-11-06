@@ -15,6 +15,11 @@ class TestEncrypt(TestCase):
         actual = base64.b64encode(des.encrypt(STR, KEY)).decode('ascii')
         self.assertEquals(expected, actual)
 
+    def test_encrypt_multiple_blocks(self):
+        expected = 'MnXbEuUtI54yddsS5S0jng=='
+        actual = base64.b64encode(des.encrypt(b'linuslaglinuslag', KEY)).decode('ascii')
+        self.assertEquals(expected, actual)
+
     def test_numeric_input(self):
         with self.assertRaises(TypeError):
             des.encrypt(1, 2)

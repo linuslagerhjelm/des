@@ -26,7 +26,7 @@ def _bit_list_to_byte_array(arr):
         [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1] -> b'123'
 
     Args:
-        arr (list): List of bits to convert to bytes
+        arr (ndarray): List of bits to convert to bytes
 
     Returns:
         bytes: the corresponding bytes
@@ -292,6 +292,17 @@ def _round(key, message):
     return np.concatenate((L1, R1))
 
 
+def _encrypt_block(key_n, block):
+    block = _perm(block, __ip)
+
+    for key in key_n:
+        block = _round(key, block)
+
+    L, R = np.split(block, 2)
+    swapped = np.concatenate((R, L))
+    return _perm(swapped, __ip_inv)
+
+
 def __make_sure_bytes(input_str):
     """Makes sure that the input string is of type bytes
 
@@ -309,8 +320,8 @@ def __make_sure_bytes(input_str):
 
 
 def __enforce_length(block):
-    if len(block) != 8:
-        raise ValueError('Expected block to be of size: 8, got size: %{}'.format(len(block)))
+    if len(block) % 8 != 0:
+        raise ValueError('Expected input to be a multiple of 8, got size: {}'.format(len(block)))
 
 
 __ip = np.array([
@@ -357,18 +368,13 @@ def encrypt(block, key):
     __enforce_length(key)
 
     key = _byte_array_to_bit_list(key)
-    message = _byte_array_to_bit_list(block)
-
-    message = _perm(message, __ip)
-
     key_n = _KS(key)
-    for key in key_n:
-        message = _round(key, message)
 
-    L, R = np.split(message, 2)
-    swapped = np.concatenate((R, L))
+    bits = _byte_array_to_bit_list(block)
+    blocks = np.split(bits, int(len(bits) / 64))
 
-    out = _bit_list_to_byte_array(_perm(swapped, __ip_inv))
-    return out
+    encrypted_blocks = [_encrypt_block(key_n, block) for block in blocks]
+
+    return _bit_list_to_byte_array(np.concatenate(encrypted_blocks))
 
 
