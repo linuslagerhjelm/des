@@ -49,11 +49,7 @@ def _perm(msg, p):
 
     """
 
-    msg_out = np.empty(p.shape, int)
-    for i1, i2 in zip(p, range(len(p))):
-        msg_out[i2] = msg[i1-1]  # Because the permutation definition from the standard is not zero indexed
-
-    return msg_out
+    return np.reshape(np.fromiter(map(lambda x: msg[x-1], p), int), p.shape)
 
 
 def _xor(arr1, arr2):
