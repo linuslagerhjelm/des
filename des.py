@@ -78,7 +78,7 @@ def _xor(arr1, arr2):
 
     """
 
-    return np.array(list(map(lambda x, y: int(bool(x) != bool(y)), arr1, arr2)))
+    return np.array(list(map(lambda x, y: x ^ y, arr1, arr2)))
 
 
 def _KS(key):
