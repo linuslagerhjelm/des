@@ -10,7 +10,7 @@ __Example usage:__
 ```python
 import des
 
-cipher_text = des.encrypt(b'abcdefgh', b'descrypt')
+cipher_text = des.encrypt(b'abcdefgh', key=b'descrypt')
 
 print(cipher_text)  # b'\x03<\xb4\xd8E\xd98\xa7'
 ```
