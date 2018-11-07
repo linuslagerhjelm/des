@@ -2,7 +2,7 @@
 A performant implementation of the Data Encryption Standard (DES) written in
 pure python with a minimal amount of dependencies. 
 
-Currently, the algorithm only support encryption of blocks that are a multiple of 8. 
+Currently, the algorithm only support encryption using ECB mode. 
 However, support for CBC as well as padding is planned for the future.
 
 __Example usage:__
@@ -18,8 +18,7 @@ print(cipher_text)  # b'\x03<\xb4\xd8E\xd98\xa7'
 __Planned features:__
 
  - CBC mode
- - Normal padding mode
- - PKCS5 padding
- - ~~Decryption~~
+ - ~~PKCS5 padding~~
+ - Decryption
 ---
  - Tripple DES
