@@ -293,6 +293,19 @@ def _round(key, message):
 
 
 def _encrypt_block(key_n, block):
+    """Performs the complete encryption of a block using the provided keys
+
+    Accepts the 16 key samples to use when performing the 16 rounds of encryption of the block.
+    This function performs all necessary operations to completely encrypt the provided block.
+
+    Args:
+        key_n (ndarray): List of shape (16, 48) containing the different keys to use for each round
+        block (ndarray): 64 bit block to encrypt
+
+    Returns:
+        ndarray: The encrypted block (64 bits)
+
+    """
     block = _perm(block, __ip)
 
     for key in key_n:
@@ -304,6 +317,20 @@ def _encrypt_block(key_n, block):
 
 
 def _pad(block, n=8):
+    """Pads the block to a multiple of n
+
+    Accepts an arbitrary sized block and pads it to be a multiple of n.
+    Padding is done using the PKCS5 method, i.e., the block is padded with
+    the same byte as the number of bytes to add.
+
+    Args:
+        block (bytes): The block to pad, may be arbitrary large.
+        n (int): The resulting bytes object will be padded to a multiple of this number
+
+    Returns:
+        bytes: a bytes object created from the input string
+
+    """
     if len(block) % n == 0:
         return block
 
