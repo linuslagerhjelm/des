@@ -20,6 +20,16 @@ class TestEncrypt(TestCase):
         actual = base64.b64encode(des.encrypt(b'linuslaglinuslag', KEY)).decode('ascii')
         self.assertEquals(expected, actual)
 
+    def test_pad_last_block_pkcs5(self):
+        expected = 'MnXbEuUtI5576qKp8Cd5Ag=='
+        actual = base64.b64encode(des.encrypt(b'linuslagl', KEY)).decode('ascii')
+        self.assertEqual(expected, actual)
+
+    def test_pad_single_block_pkcs5(self):
+        expected = 'e+qiqfAneQI='
+        actual = base64.b64encode(des.encrypt(b'l', KEY)).decode('ascii')
+        self.assertEqual(expected, actual)
+
     def test_numeric_input(self):
         with self.assertRaises(TypeError):
             des.encrypt(1, 2)

@@ -303,6 +303,15 @@ def _encrypt_block(key_n, block):
     return _perm(swapped, __ip_inv)
 
 
+def _pad(block, n=8):
+    if len(block) % n == 0:
+        return block
+
+    pad_len = n - (len(block) % n)
+    block += bytes([pad_len] * pad_len)
+    return block
+
+
 def __make_sure_bytes(input_str):
     """Makes sure that the input string is of type bytes
 
@@ -319,9 +328,9 @@ def __make_sure_bytes(input_str):
         raise TypeError('Argument must be of type string or bytes')
 
 
-def __enforce_length(block):
+def __enforce_key_length(block):
     if len(block) % 8 != 0:
-        raise ValueError('Expected input to be a multiple of 8, got size: {}'.format(len(block)))
+        raise ValueError('Expected key to be exactly 8 bytes, got {}'.format(len(block)))
 
 
 __ip = np.array([
@@ -364,13 +373,11 @@ def encrypt(block, key):
     __make_sure_bytes(block)
     __make_sure_bytes(key)
 
-    __enforce_length(block)
-    __enforce_length(key)
-
+    __enforce_key_length(key)
     key = _byte_array_to_bit_list(key)
     key_n = _KS(key)
 
-    bits = _byte_array_to_bit_list(block)
+    bits = _byte_array_to_bit_list(_pad(block))
     blocks = np.split(bits, int(len(bits) / 64))
 
     encrypted_blocks = [_encrypt_block(key_n, block) for block in blocks]
