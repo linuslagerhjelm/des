@@ -1,4 +1,3 @@
-import unittest
 from unittest import TestCase
 
 import base64
@@ -174,7 +173,7 @@ class TestEncrypt(TestCase):
         ]
         actual_bits = des._KS(des._byte_array_to_bit_list(KEY))
 
-        [self.assertEquals(expected, actual.tolist()) for expected, actual in zip(keys, actual_bits)]
+        [self.assertEqual(expected, actual.tolist()) for expected, actual in zip(keys, actual_bits)]
 
     def test_round(self):
         key = np.array([1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0,
@@ -188,7 +187,7 @@ class TestEncrypt(TestCase):
 
         actual = des._round(key, message).tolist()
 
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
 
     def test_f_function(self):
         R = np.array([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
@@ -198,4 +197,4 @@ class TestEncrypt(TestCase):
                       0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1])
         expected = [1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0]
 
-        self.assertEquals(expected, des._f(R, K).tolist())
+        self.assertEqual(expected, des._f(R, K).tolist())
