@@ -114,13 +114,13 @@ def _KS(key):
 
     C, D = np.split(_perm(key, pc1), 2)
 
-    keys = []
+    keys = np.empty(16, object)
     for i in range(16):
         C = np.roll(C, -left_shifts[i])
         D = np.roll(D, -left_shifts[i])
-        keys.append(_perm(np.concatenate((C, D)), pc2))
+        keys[i] = _perm(np.concatenate((C, D)), pc2)
 
-    return np.array(keys)
+    return keys
 
 
 def _S(n, block):
@@ -382,8 +382,9 @@ __ip_inv = np.array([
 def encrypt(block, key):
     """Encrypts the provided block using the provided key
 
-    Accepts the block to encrypt as well as the key to use. Both of which MUST be exactly 8 bytes long and
-    of type bytes. Will not do a parity bit check of the key.
+    Accepts the block to encrypt as well as the key to use. The key MUST be exactly 8 bytes long and
+    both the key and the block have to be of type bytes. Will not do a parity bit check of the key.
+    If the size of block is not a multiple of 8, it will be padded using the PKCS5 method.
 
     Args:
         block (bytes): The input string to validate.
