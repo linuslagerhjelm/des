@@ -20,6 +20,6 @@ __Planned features:__
  - CBC mode
  - Normal padding mode
  - PKCS5 padding
- - Decryption
+ - ~~Decryption~~
 ---
  - Tripple DES
