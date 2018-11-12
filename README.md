@@ -3,7 +3,7 @@ A performant implementation of the Data Encryption Standard (DES) written in
 pure python with a minimal amount of dependencies. 
 
 Currently, the algorithm only support encryption using ECB mode. 
-However, support for CBC as well as padding is planned for the future.
+However, support for CBC is planned for the future.
 
 __Example usage:__
 
