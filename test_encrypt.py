@@ -41,12 +41,12 @@ class TestEncrypt(TestCase):
         expected = [0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1,
                     0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0]
         actual = des._byte_array_to_bit_list(KEY).tolist()
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
 
     def test_bit_list_to_string(self):
         expected = KEY
         actual = des._bit_list_to_byte_array(des._byte_array_to_bit_list(KEY))
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
 
     def test_perm(self):
         p1 = np.array([1, 2, 3, 4])
@@ -70,7 +70,7 @@ class TestEncrypt(TestCase):
         actual = []
         for i, b in zip(range(8), np.reshape(inp, (8, 6))):
             actual.extend(des._S(i, b))
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
 
     def test_e_function(self):
         in_arr = np.array([1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
