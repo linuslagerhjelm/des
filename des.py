@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 from bitstring import Bits
 
@@ -312,6 +313,47 @@ def _encrypt_block(key_n, block):
     return _perm(swapped, __ip_inv)
 
 
+def __encrypt_ecb(key_n, blocks):
+    """Encrypts the provided blocks using the provided keys using ECB mode
+
+    Accepts the 16 key samples to use when performing the 16 rounds of encryption of the block.
+
+    Args:
+        key_n (ndarray): List of shape (16, 48) containing the different keys to use for each round
+        blocks (ndarray): n x 64 bit array representing the blocks to encrypt
+
+    Returns:
+        ndarray: The data encrypted with ECB mode
+
+    """
+    return [_encrypt_block(key_n, block) for block in blocks]
+
+
+def __encrypt_cbc(key_n, blocks, iv):
+    """Encrypts the provided blocks using the provided keys using CBC mode
+
+    Accepts the 16 key samples to use when performing the 16 rounds of encryption of the block.
+
+    Args:
+        key_n (ndarray): List of shape (16, 48) containing the different keys to use for each round
+        blocks (ndarray): n x 64 bit array representing the blocks to encrypt
+
+    Returns:
+        ndarray: The data encrypted with CBC mode
+
+    """
+    encrypted_blocks = []
+    previous_block = _byte_array_to_bit_list(iv)
+
+    for block in blocks:
+        block = _xor(block, previous_block)
+
+        previous_block = _encrypt_block(key_n, block)
+        encrypted_blocks.append(previous_block)
+
+    return encrypted_blocks
+
+
 def _pad(block, n=8):
     """Pads the block to a multiple of n
 
@@ -356,6 +398,31 @@ def __enforce_key_length(block):
         raise ValueError('Expected key to be exactly 8 bytes, got {}'.format(len(block)))
 
 
+def __validate_iv(mode, iv):
+    """Makes sure that the initialization vector is correct
+
+    Throws an error if the iv does not follow the specification
+
+    Args:
+        mode (str): The mode of operation that is used in this encryption.
+        iv (bytes): The initialization vector to validate.
+
+    """
+    if mode == CBC:
+        if not iv:
+            raise TypeError('Initialization vector must be provided if mode is CBC')
+
+        else:
+            __make_sure_bytes(iv)
+
+        if len(iv) != 8:
+            raise ValueError('Initialization vector must be 8 bytes long')
+
+    if mode == ECB and iv:
+        warnings.warn('Initialization vector is not used in ECB mode. \
+        The iv is ignored but this might indicate an error in your program')
+
+
 __ip = np.array([
     58, 50, 42, 34, 26, 18, 10, 2,
     60, 52, 44, 36, 28, 20, 12, 4,
@@ -378,8 +445,11 @@ __ip_inv = np.array([
     33, 1, 41, 9, 49, 17, 57, 25
 ])
 
+CBC = 'CBC'
+ECB = 'ECB'
 
-def encrypt(block, key):
+
+def encrypt(block, key, mode=CBC, iv=None):
     """Encrypts the provided block using the provided key
 
     Accepts the block to encrypt as well as the key to use. The key MUST be exactly 8 bytes long and
@@ -389,6 +459,8 @@ def encrypt(block, key):
     Args:
         block (bytes): The input string to validate.
         key (bytes): The key to use for encryption.
+        mode (str): One of CBC or ECB, defaults to CBC.
+        iv (bytes): The initialization vector to use for CBC mode, should probably not be provided in ECB mode.
 
     Returns:
         bytes: The block encrypted with the provided key.
@@ -396,16 +468,16 @@ def encrypt(block, key):
     """
     __make_sure_bytes(block)
     __make_sure_bytes(key)
-
     __enforce_key_length(key)
+    __validate_iv(mode, iv)
+
     key = _byte_array_to_bit_list(key)
     key_n = _KS(key)
 
     bits = _byte_array_to_bit_list(_pad(block))
     blocks = np.split(bits, int(len(bits) / 64))
 
-    encrypted_blocks = [_encrypt_block(key_n, block) for block in blocks]
+    encrypted_blocks = __encrypt_cbc(key_n, blocks, iv) if mode == CBC else __encrypt_ecb(key_n, blocks)
 
     return _bit_list_to_byte_array(np.concatenate(encrypted_blocks))
-
 

@@ -11,31 +11,31 @@ KEY = b'descrypt'
 class TestEncrypt(TestCase):
     def test_sunny_day_encryption(self):
         expected = 'MnXbEuUtI54='
-        actual = base64.b64encode(des.encrypt(STR, KEY)).decode('ascii')
-        self.assertEquals(expected, actual)
+        actual = base64.b64encode(des.encrypt(STR, KEY, 'ECB')).decode('ascii')
+        self.assertEqual(expected, actual)
 
     def test_encrypt_multiple_blocks(self):
         expected = 'MnXbEuUtI54yddsS5S0jng=='
-        actual = base64.b64encode(des.encrypt(STR * 2, KEY)).decode('ascii')
-        self.assertEquals(expected, actual)
+        actual = base64.b64encode(des.encrypt(STR * 2, KEY, 'ECB')).decode('ascii')
+        self.assertEqual(expected, actual)
 
     def test_pad_last_block_pkcs5(self):
         expected = 'MnXbEuUtI5576qKp8Cd5Ag=='
-        actual = base64.b64encode(des.encrypt(b'linuslagl', KEY)).decode('ascii')
+        actual = base64.b64encode(des.encrypt(b'linuslagl', KEY, 'ECB')).decode('ascii')
         self.assertEqual(expected, actual)
 
     def test_pad_single_block_pkcs5(self):
         expected = 'e+qiqfAneQI='
-        actual = base64.b64encode(des.encrypt(b'l', KEY)).decode('ascii')
+        actual = base64.b64encode(des.encrypt(b'l', KEY, 'ECB')).decode('ascii')
         self.assertEqual(expected, actual)
 
     def test_numeric_input(self):
         with self.assertRaises(TypeError):
-            des.encrypt(1, 2)
+            des.encrypt(1, 2, 'ECB')
 
     def test_wrong_length(self):
         with self.assertRaises(ValueError):
-            des.encrypt(b'a', b'b')
+            des.encrypt(b'a', b'b', 'ECB')
 
     def test_string_to_bit_list(self):
         expected = [0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1,
@@ -198,3 +198,17 @@ class TestEncrypt(TestCase):
         expected = [1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0]
 
         self.assertEqual(expected, des._f(R, K).tolist())
+
+    def test_invalid_iv(self):
+        with self.assertRaises(ValueError):
+            des.encrypt(STR, KEY, 'CBC', iv=b'\0')
+
+    def test_iv_not_provided(self):
+        with self.assertRaises(TypeError):
+            des.encrypt(STR, KEY, 'CBC')
+
+    def test_cbc_mode(self):
+        expected = b'2u\xdb\x12\xe5-#\x9e\xe7\x8b\x99\x85M\xcc\x9a\r'
+        actual = des.encrypt(STR * 2, KEY, iv=b'\0\0\0\0\0\0\0\0')
+
+        self.assertEqual(expected, actual)

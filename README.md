@@ -17,7 +17,7 @@ print(cipher_text)  # b'\x03<\xb4\xd8E\xd98\xa7'
 
 __Planned features:__
 
- - CBC mode
+ - ~~CBC mode~~
  - ~~PKCS5 padding~~
  - Decryption
 ---
