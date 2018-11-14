@@ -9,9 +9,10 @@ __Example usage:__
 ```python
 import des
 
-cipher_text = des.encrypt(b'abcdefgh', key=b'descrypt', mode='ECB')
+string = b'abcdefgh'
+cipher_text = des.encrypt(string * 2, key=b'descrypt', iv=b'+\x8c\x17\xcf-\xe0k>')
 
-print(cipher_text)  # b'\x03<\xb4\xd8E\xd98\xa7'
+print(cipher_text)  # b'w\xb8d\xbc\xa9 B\xd9\x15\x7f\x1e_\xa4\xcbs\xd1'
 ```
 
 __Planned features:__
