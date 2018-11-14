@@ -16,7 +16,7 @@ class TestEncrypt(TestCase):
 
     def test_encrypt_multiple_blocks(self):
         expected = 'MnXbEuUtI54yddsS5S0jng=='
-        actual = base64.b64encode(des.encrypt(b'linuslaglinuslag', KEY)).decode('ascii')
+        actual = base64.b64encode(des.encrypt(STR * 2, KEY)).decode('ascii')
         self.assertEquals(expected, actual)
 
     def test_pad_last_block_pkcs5(self):
