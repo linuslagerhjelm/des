@@ -502,11 +502,29 @@ def decrypt(block, key, mode=CBC, iv=None):
     __validate_input(block, key, mode, iv)
 
     key = _byte_array_to_bit_list(key)
-    key_n = _KS(key)
+    key_n = list(reversed(_KS(key)))
 
     bits = _byte_array_to_bit_list(_pad(block))
     blocks = np.split(bits, int(len(bits) / 64))
 
-    decrypted_blocks = __encrypt_ecb(list(reversed(key_n)), blocks)
+    if mode == ECB:
+        decrypted_blocks = __encrypt_ecb(key_n, blocks)
+
+    else:
+        iv = _byte_array_to_bit_list(iv)
+        decrypted_blocks = []
+        i = 1
+        while i < len(blocks):
+            block = blocks[-i]
+            block = _encrypt_block(key_n, block)
+            block = _xor(block, blocks[-(i+1)])
+
+            decrypted_blocks = [block] + decrypted_blocks
+            i += 1
+
+        block = blocks[0]
+        block = _encrypt_block(key_n, block)
+        block = _xor(block, iv)
+        decrypted_blocks = [block] + decrypted_blocks
 
     return _bit_list_to_byte_array(np.concatenate(decrypted_blocks))
