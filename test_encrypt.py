@@ -8,7 +8,7 @@ STR = b'linuslag'
 KEY = b'descrypt'
 
 
-class TestEncrypt(TestCase):
+class TestDes(TestCase):
     def test_sunny_day_encryption(self):
         expected = 'MnXbEuUtI54='
         actual = base64.b64encode(des.encrypt(STR, KEY, 'ECB')).decode('ascii')
