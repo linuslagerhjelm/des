@@ -6,6 +6,7 @@ import des
 
 STR = b'linuslag'
 KEY = b'descrypt'
+IV = b'5J\x01C\x8c\xa6\xe3\xde'  # Random bytes from /dev/urandom, any 8 bytes would suffice
 
 
 class TestDes(TestCase):
@@ -214,8 +215,8 @@ class TestDes(TestCase):
         self.assertEqual(expected, actual)
 
     def test_cbc_mode_multiple_blocks(self):
-        expected = b'2u\xdb\x12\xe5-#\x9e\xe7\x8b\x99\x85M\xcc\x9a\r'
-        actual = des.encrypt(STR * 2, KEY, iv=b'\0\0\0\0\0\0\0\0')
+        expected = b'B_ 1lA\xad\xef@\x83\xad\x89R\xcf\xf0\xf1'
+        actual = des.encrypt(STR * 2, KEY, iv=IV)
 
         self.assertEqual(expected, actual)
 
