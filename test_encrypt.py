@@ -207,7 +207,13 @@ class TestEncrypt(TestCase):
         with self.assertRaises(TypeError):
             des.encrypt(STR, KEY, 'CBC')
 
-    def test_cbc_mode(self):
+    def test_cbc_mode_single_block(self):
+        expected = 'MnXbEuUtI54='
+        actual = base64.b64encode(des.encrypt(STR, KEY, 'ECB')).decode('ascii')
+
+        self.assertEqual(expected, actual)
+
+    def test_cbc_mode_multiple_blocks(self):
         expected = b'2u\xdb\x12\xe5-#\x9e\xe7\x8b\x99\x85M\xcc\x9a\r'
         actual = des.encrypt(STR * 2, KEY, iv=b'\0\0\0\0\0\0\0\0')
 
