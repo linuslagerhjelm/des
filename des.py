@@ -423,6 +423,25 @@ def __validate_iv(mode, iv):
         The iv is ignored but this might indicate an error in your program')
 
 
+def __validate_input(block, key, mode, iv):
+    """Validates the input parameters
+
+    Makes sure that the parameter values and combinations are valid enough to perform a correct encryption.
+    If something is wrong, this function will throw an appropriate error with useful error information.
+
+    Args:
+        block (bytes): The input string to validate.
+        key (bytes): The key to validate.
+        mode (str): The mode to validate.
+        iv (bytes): The initialization vector to validate
+
+    """
+    __make_sure_bytes(block)
+    __make_sure_bytes(key)
+    __enforce_key_length(key)
+    __validate_iv(mode, iv)
+
+
 __ip = np.array([
     58, 50, 42, 34, 26, 18, 10, 2,
     60, 52, 44, 36, 28, 20, 12, 4,
@@ -457,7 +476,7 @@ def encrypt(block, key, mode=CBC, iv=None):
     If the size of block is not a multiple of 8, it will be padded using the PKCS5 method.
 
     Args:
-        block (bytes): The input string to validate.
+        block (bytes): The input string to encrypt.
         key (bytes): The key to use for encryption.
         mode (str): One of CBC or ECB, defaults to CBC.
         iv (bytes): The initialization vector to use for CBC mode, should probably not be provided in ECB mode.
@@ -466,10 +485,7 @@ def encrypt(block, key, mode=CBC, iv=None):
         bytes: The block encrypted with the provided key.
 
     """
-    __make_sure_bytes(block)
-    __make_sure_bytes(key)
-    __enforce_key_length(key)
-    __validate_iv(mode, iv)
+    __validate_input(block, key, mode, iv)
 
     key = _byte_array_to_bit_list(key)
     key_n = _KS(key)
@@ -482,7 +498,9 @@ def encrypt(block, key, mode=CBC, iv=None):
     return _bit_list_to_byte_array(np.concatenate(encrypted_blocks))
 
 
-def decrypt(block, key):
+def decrypt(block, key, mode=CBC, iv=None):
+    __validate_input(block, key, mode, iv)
+
     key = _byte_array_to_bit_list(key)
     key_n = _KS(key)
 

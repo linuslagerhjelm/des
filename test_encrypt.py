@@ -222,24 +222,24 @@ class TestDes(TestCase):
 
     def test_decrypt_single_block_ecb(self):
         expected = STR
-        actual = des.decrypt(des.encrypt(STR, KEY, 'ECB'), KEY)
+        actual = des.decrypt(des.encrypt(STR, KEY, 'ECB'), KEY, 'ECB')
 
         self.assertEqual(expected, actual)
 
     def test_decrypt_multiple_blocks_ecb(self):
         expected = STR * 2
-        actual = des.decrypt(des.encrypt(STR * 2, KEY, 'ECB'), KEY)
+        actual = des.decrypt(des.encrypt(STR * 2, KEY, 'ECB'), KEY, 'ECB')
 
         self.assertEqual(expected, actual)
 
     def test_decrypt_single_block_cbc(self):
         expected = STR
-        actual = des.decrypt(des.encrypt(STR, KEY, iv=IV), KEY)
+        actual = des.decrypt(des.encrypt(STR, KEY, iv=IV), KEY, iv=IV)
 
         self.assertEqual(expected, actual)
 
     def test_decrypt_multiple_blocks_cbc(self):
         expected = STR * 2
-        actual = des.decrypt(des.encrypt(STR * 2, KEY, iv=IV), KEY)
+        actual = des.decrypt(des.encrypt(STR * 2, KEY, iv=IV), KEY, iv=IV)
 
         self.assertEqual(expected, actual)
