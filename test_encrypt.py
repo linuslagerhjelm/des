@@ -218,3 +218,9 @@ class TestDes(TestCase):
         actual = des.encrypt(STR * 2, KEY, iv=b'\0\0\0\0\0\0\0\0')
 
         self.assertEqual(expected, actual)
+
+    def test_decrypt_basic(self):
+        expected = STR
+        actual = des.decrypt(des.encrypt(STR, KEY, 'ECB'), KEY)
+
+        self.assertEqual(expected, actual)

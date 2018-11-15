@@ -481,3 +481,6 @@ def encrypt(block, key, mode=CBC, iv=None):
 
     return _bit_list_to_byte_array(np.concatenate(encrypted_blocks))
 
+
+def decrypt(block, key):
+    return None
