@@ -483,4 +483,12 @@ def encrypt(block, key, mode=CBC, iv=None):
 
 
 def decrypt(block, key):
-    return None
+    key = _byte_array_to_bit_list(key)
+    key_n = _KS(key)
+
+    bits = _byte_array_to_bit_list(_pad(block))
+    blocks = np.split(bits, int(len(bits) / 64))
+
+    decrypted_blocks = __encrypt_ecb(list(reversed(key_n)), blocks)
+
+    return _bit_list_to_byte_array(np.concatenate(decrypted_blocks))
