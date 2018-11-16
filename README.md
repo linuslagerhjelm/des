@@ -1,18 +1,18 @@
 # DES
-A performant implementation of the Data Encryption Standard (DES) written in
+An implementation of the Data Encryption Standard (DES) written in
 pure python with a minimal amount of dependencies. 
 
-Currently, the algorithm only support encryption using ECB mode. 
-However, support for CBC is planned for the future.
+This is mostly written for educational purposes; however, should you need a pure python implementation for whatever reason, this should be correct enough so feel free to go ahead and use it. Of course DES is no longer considered secure, even when implemented correctly, so do not use it for anything important. 
 
 __Example usage:__
 
 ```python
 import des
 
-cipher_text = des.encrypt(b'abcdefgh', key=b'descrypt')
+string = b'abcdefgh'
+cipher_text = des.encrypt(string * 2, key=b'descrypt', iv=b'+\x8c\x17\xcf-\xe0k>')
 
-print(cipher_text)  # b'\x03<\xb4\xd8E\xd98\xa7'
+print(cipher_text)  # b'w\xb8d\xbc\xa9 B\xd9\x15\x7f\x1e_\xa4\xcbs\xd1'
 ```
 
 __Planned features:__
