@@ -343,7 +343,7 @@ def __encrypt_cbc(key_n, blocks, iv):
 
     """
     encrypted_blocks = []
-    previous_block = _byte_array_to_bit_list(iv)
+    previous_block = iv
 
     for block in blocks:
         block = _xor(block, previous_block)
@@ -352,6 +352,33 @@ def __encrypt_cbc(key_n, blocks, iv):
         encrypted_blocks.append(previous_block)
 
     return encrypted_blocks
+
+
+def __decrypt_cbc(key_n, blocks, iv):
+    """Decrypts data that were previously encrypted using CBC mode
+
+    Accepts the 16 key samples to use when performing the 16 rounds of decryption of a block.
+
+    Args:
+        key_n (ndarray): List of shape (16, 48) containing the different keys to use for each round
+        blocks (ndarray): n x 64 bit array representing the blocks to decrypt
+
+    Returns:
+        ndarray: Decrypted data
+
+    """
+    blocks = [iv] + blocks
+    decrypted_blocks = []
+    i = 1
+    while i < len(blocks):
+        block = blocks[-i]
+        block = _encrypt_block(key_n, block)
+        block = _xor(block, blocks[-(i + 1)])
+
+        decrypted_blocks = [block] + decrypted_blocks
+        i += 1
+
+    return decrypted_blocks
 
 
 def _pad(block, n=8):
@@ -493,7 +520,7 @@ def encrypt(block, key, mode=CBC, iv=None):
     bits = _byte_array_to_bit_list(_pad(block))
     blocks = np.split(bits, int(len(bits) / 64))
 
-    encrypted_blocks = __encrypt_cbc(key_n, blocks, iv) if mode == CBC else __encrypt_ecb(key_n, blocks)
+    encrypted_blocks = __encrypt_cbc(key_n, blocks, _byte_array_to_bit_list(iv)) if mode == CBC else __encrypt_ecb(key_n, blocks)
 
     return _bit_list_to_byte_array(np.concatenate(encrypted_blocks))
 
@@ -512,19 +539,7 @@ def decrypt(block, key, mode=CBC, iv=None):
 
     else:
         iv = _byte_array_to_bit_list(iv)
-        decrypted_blocks = []
-        i = 1
-        while i < len(blocks):
-            block = blocks[-i]
-            block = _encrypt_block(key_n, block)
-            block = _xor(block, blocks[-(i+1)])
+        decrypted_blocks = __decrypt_cbc(key_n, blocks, iv)
 
-            decrypted_blocks = [block] + decrypted_blocks
-            i += 1
-
-        block = blocks[0]
-        block = _encrypt_block(key_n, block)
-        block = _xor(block, iv)
-        decrypted_blocks = [block] + decrypted_blocks
-
-    return _bit_list_to_byte_array(np.concatenate(decrypted_blocks))
+    decrypted = _bit_list_to_byte_array(np.concatenate(decrypted_blocks))
+    return __unpad(decrypted)
