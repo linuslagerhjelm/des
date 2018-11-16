@@ -243,3 +243,17 @@ class TestDes(TestCase):
         actual = des.decrypt(des.encrypt(STR * 2, KEY, iv=IV), KEY, iv=IV)
 
         self.assertEqual(expected, actual)
+
+    def test_decrypt_and_unpad_ecb(self):
+        LOCAL_STR = b'linus'
+        expected = LOCAL_STR
+        actual = des.decrypt(des.encrypt(LOCAL_STR, KEY, 'ECB'), KEY, 'ECB')
+
+        self.assertEqual(expected, actual)
+
+    def test_decrypt_and_unpad_cbc(self):
+        LOCAL_STR = b'linus'
+        expected = LOCAL_STR
+        actual = des.decrypt(des.encrypt(LOCAL_STR, KEY, iv=IV), KEY, iv=IV)
+
+        self.assertEqual(expected, actual)

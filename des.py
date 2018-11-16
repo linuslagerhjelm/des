@@ -404,6 +404,23 @@ def _pad(block, n=8):
     return block
 
 
+def __unpad(string):
+    """Removes padding from the provided string
+
+    This function is the inverse of _pad such that unpad(pad(m)) = m
+    Args:
+        string (bytes): The block to unpad, may be arbitrary large.
+
+    Returns:
+        bytes: a bytes object created from the input string
+
+    """
+    pad_len = string[-1]
+    if pad_len > 8:
+        return string
+    return string[:-pad_len]
+
+
 def __make_sure_bytes(input_str):
     """Makes sure that the input string is of type bytes
 
