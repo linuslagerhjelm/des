@@ -11,12 +11,12 @@ IV = b'5J\x01C\x8c\xa6\xe3\xde'  # Random bytes from /dev/urandom, any 8 bytes w
 
 class TestDes(TestCase):
     def test_sunny_day_encryption(self):
-        expected = 'MnXbEuUtI54='
+        expected = 'MnXbEuUtI55hSw/H4YCuGA=='
         actual = base64.b64encode(des.encrypt(STR, KEY, 'ECB')).decode('ascii')
         self.assertEqual(expected, actual)
 
     def test_encrypt_multiple_blocks(self):
-        expected = 'MnXbEuUtI54yddsS5S0jng=='
+        expected = 'MnXbEuUtI54yddsS5S0jnmFLD8fhgK4Y'
         actual = base64.b64encode(des.encrypt(STR * 2, KEY, 'ECB')).decode('ascii')
         self.assertEqual(expected, actual)
 
@@ -209,14 +209,14 @@ class TestDes(TestCase):
             des.encrypt(STR, KEY, 'CBC')
 
     def test_cbc_mode_single_block(self):
-        expected = 'MnXbEuUtI54='
-        actual = base64.b64encode(des.encrypt(STR, KEY, 'ECB')).decode('ascii')
+        expected = 'Ql8gMWxBre9vPW6E/N3Ing=='
+        actual = base64.b64encode(des.encrypt(STR, KEY, iv=IV)).decode('ascii')
 
         self.assertEqual(expected, actual)
 
     def test_cbc_mode_multiple_blocks(self):
-        expected = b'B_ 1lA\xad\xef@\x83\xad\x89R\xcf\xf0\xf1'
-        actual = des.encrypt(STR * 2, KEY, iv=IV)
+        expected = 'Ql8gMWxBre9Ag62JUs/w8RNja0S3tiTG'
+        actual = base64.b64encode(des.encrypt(STR * 2, KEY, iv=IV)).decode('ascii')
 
         self.assertEqual(expected, actual)
 

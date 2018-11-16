@@ -396,8 +396,6 @@ def _pad(block, n=8):
         bytes: a bytes object created from the input string
 
     """
-    if len(block) % n == 0:
-        return block
 
     pad_len = n - (len(block) % n)
     block += bytes([pad_len] * pad_len)
@@ -416,8 +414,6 @@ def __unpad(string):
 
     """
     pad_len = string[-1]
-    if pad_len > 8:
-        return string
     return string[:-pad_len]
 
 
@@ -543,12 +539,20 @@ def encrypt(block, key, mode=CBC, iv=None):
 
 
 def decrypt(block, key, mode=CBC, iv=None):
+    """Decrypts the provided block that were previously encrypted with the provided key
+
+    Args:
+        block (bytes): The input string to decrypt.
+        key (bytes): The key to use for decryption.
+        mode (str): One of CBC or ECB, defaults to CBC.
+        iv (bytes): The initialization vector used for CBC mode, should probably not be provided in ECB mode.
+    """
     __validate_input(block, key, mode, iv)
 
     key = _byte_array_to_bit_list(key)
     key_n = list(reversed(_KS(key)))
 
-    bits = _byte_array_to_bit_list(_pad(block))
+    bits = _byte_array_to_bit_list(block)
     blocks = np.split(bits, int(len(bits) / 64))
 
     if mode == ECB:
